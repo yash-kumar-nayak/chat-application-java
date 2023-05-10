@@ -7,20 +7,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.Socket;
 import java.util.Calendar;
 import javax.swing.*;
 import java.text.*;
 import javax.swing.border.*;
-import java.net.*;
 
 
-public class Server   implements ActionListener{
+public class Client implements ActionListener{
     JTextField text;
-     JPanel a1;
-      static Box vertical=Box.createVerticalBox();
-       static JFrame f=new JFrame();
-      static DataOutputStream dout;
-    Server(){
+     static JPanel a1;
+     static DataOutputStream dout;
+      static JFrame f=new JFrame();
+        static Box vertical=Box.createVerticalBox();
+    Client(){
        f.setTitle("Chatting App");
         
         
@@ -40,7 +40,7 @@ public class Server   implements ActionListener{
 		 backbtn.setBounds(5, 15, 25, 25);
 		p1.add(backbtn);
                 
-          ImageIcon pr1=new ImageIcon(ClassLoader.getSystemResource("icons/maya.png"));
+          ImageIcon pr1=new ImageIcon(ClassLoader.getSystemResource("icons/yash.png"));
 		 Image pr2=pr1.getImage().getScaledInstance(45, 45, Image.SCALE_DEFAULT);
 		ImageIcon pr3=new  ImageIcon(pr2);
 		 JLabel profile=new JLabel(pr3);
@@ -69,7 +69,7 @@ public class Server   implements ActionListener{
                 
                 
                 
-                JLabel name=new JLabel("MAYA");
+                JLabel name=new JLabel("YASH");
                 name.setBounds(95,5,80,50);
                 name.setForeground(Color.white);
                 name.setFont(new Font("SAN_SERIF", Font.BOLD,20));
@@ -136,31 +136,34 @@ public class Server   implements ActionListener{
                   f.setLayout(null);
         f.setSize(450,700);
         
-        f.setLocation(150,50);
+        f.setLocation(800,50);
 //        this is used to delete the upper titile bar
-//         setUndecorated(true);
+//         f.setUndecorated(true); 
          f.setVisible(true);
                 
     }
     public static void main(String[] args) {
-        new Server();
+        new Client();
         
         try {
-            ServerSocket skt=new ServerSocket(6001);
-            while(true){
-                Socket s=skt.accept();
-                DataInputStream din=new DataInputStream(s.getInputStream());
+//            Socket s=new Socket("192.168.2.159",6001);
+            Socket s=new Socket("127.0.0.1",6001);
+             DataInputStream din=new DataInputStream(s.getInputStream());
                  dout=new DataOutputStream(s.getOutputStream());
-                while(true){
+                  while(true){
+                      a1.setLayout(new BorderLayout()); 
                     String msg=din.readUTF();
                     JPanel panel=formatLabel(msg);
                     JPanel left =new JPanel(new BorderLayout());
                     left.add(panel,BorderLayout.LINE_START);
                     vertical.add(left);
+                    
+                    vertical.add(Box.createVerticalStrut(10));
+                    a1.add(vertical,BorderLayout.PAGE_START);
+                    
+                    
                     f.validate();
                 }
-                        }
-            
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -178,25 +181,31 @@ public class Server   implements ActionListener{
       JPanel right= new JPanel(new  BorderLayout());
        right.add(m2,BorderLayout.LINE_END);
        vertical.add(right);
-       vertical.add(Box.createVerticalStrut(15));
+       vertical.add(Box.createVerticalStrut(10));
        a1.add(vertical,BorderLayout.PAGE_START);
+       
+       
        dout.writeUTF(out);
        text.setText("");
+       
+       
        f.repaint();
        f.invalidate();
        f.validate();
-    } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
     }
     public static JPanel formatLabel(String out){
         JPanel panel=new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+//        panel.setBackground(new Color(0,0,0,65));
+
         JLabel output=new JLabel("<html><p style=\"width:150px\">"+out+"</p><html>");
         output.setFont(new Font("Tohoma",Font.PLAIN,15));
-//        output.setBackground(new Color(0,0,0,65));
-        
-//        output.setBackground(new Color(0,0,0,65));
+        output.setBackground(new Color(0,0,0,65));
+//         output.setBackground(new Color(25,65,45));
         output.setBackground(Color.green);
         output.setOpaque(true);
         output.setBorder(new EmptyBorder(15,15,15,50));
